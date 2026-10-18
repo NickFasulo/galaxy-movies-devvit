@@ -1,6 +1,6 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
-  "name": "galaxy-movies",
+  "name": "galaxy-cron",
   "server": {
     "dir": "dist/server",
     "entry": "index.cjs"
@@ -10,7 +10,9 @@
     "redis": true,
     "http": {
       "enable": true,
-      "domains": ["www.galaxymovies.app"]
+      "domains": [
+        "www.galaxymovies.app"
+      ]
     }
   },
   "scheduler": {
@@ -31,5 +33,8 @@
         "endpoint": "/internal/menu/post-now"
       }
     ]
+  },
+  "dev": {
+    "subreddit": "galaxy_cron_dev"
   }
 }
