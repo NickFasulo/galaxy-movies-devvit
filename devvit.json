@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "galaxy-movies",
+  "server": {
+    "dir": "dist/server",
+    "entry": "index.cjs"
+  },
+  "permissions": {
+    "reddit": true,
+    "redis": true,
+    "http": {
+      "enable": true,
+      "domains": ["www.galaxymovies.app"]
+    }
+  },
+  "scheduler": {
+    "tasks": {
+      "weekly-broadcast": {
+        "endpoint": "/internal/scheduler/weekly-broadcast",
+        "cron": "30 15 * * 1"
+      }
+    }
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Post this week's streaming update",
+        "description": "Manually run the weekly r/galaxymovies broadcast",
+        "forUserType": "moderator",
+        "location": "subreddit",
+        "endpoint": "/internal/menu/post-now"
+      }
+    ]
+  }
+}
