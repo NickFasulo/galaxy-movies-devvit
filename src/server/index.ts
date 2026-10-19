@@ -52,6 +52,14 @@ app.post('/internal/scheduler/weekly-broadcast', async (c) => {
   return c.json<TaskResponse>({ status: 'ok' }, 200)
 })
 
+const postNow = async (c: { json: (body: unknown, status: number) => Response }) => {
+  const result = await runBroadcast()
+  return c.json(result, result.status === 'failed' ? 500 : 200)
+}
+
+app.post('/external/post-now', postNow)
+app.get('/external/post-now', postNow)
+
 app.post('/internal/menu/post-now', async (c) => {
   await c.req.json<MenuItemRequest>().catch(() => null)
   const result = await runBroadcast()

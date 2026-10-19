@@ -3,7 +3,13 @@
   "name": "galaxy-cron",
   "server": {
     "dir": "dist/server",
-    "entry": "index.cjs"
+    "entry": "index.cjs",
+    "externalEndpoints": {
+      "post-now": {
+        "endpoint": "/external/post-now",
+        "scopes": ["install", "global"]
+      }
+    }
   },
   "permissions": {
     "reddit": true,
