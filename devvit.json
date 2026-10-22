@@ -21,11 +21,58 @@
       ]
     }
   },
+  "settings": {
+    "subreddit": {
+      "providers": {
+        "type": "multiSelect",
+        "label": "Streaming providers",
+        "helpText": "Services covered in the weekly digest. Data is for US catalogs.",
+        "options": [
+          { "label": "Netflix", "value": "netflix" },
+          { "label": "Prime Video", "value": "amazon-prime-video" },
+          { "label": "Hulu", "value": "hulu" },
+          { "label": "Disney+", "value": "disney-plus" },
+          { "label": "Apple TV+", "value": "apple-tv" },
+          { "label": "Max", "value": "max" },
+          { "label": "Peacock", "value": "peacock" },
+          { "label": "Paramount+", "value": "paramount-plus" },
+          { "label": "Tubi", "value": "tubi" },
+          { "label": "Pluto TV", "value": "pluto-tv" },
+          { "label": "The Roku Channel", "value": "roku-channel" },
+          { "label": "Starz", "value": "starz" },
+          { "label": "AMC+", "value": "amc-plus" },
+          { "label": "MGM+", "value": "mgm-plus" },
+          { "label": "Crunchyroll", "value": "crunchyroll" },
+          { "label": "Discovery+", "value": "discovery-plus" },
+          { "label": "Plex", "value": "plex" },
+          { "label": "Kanopy", "value": "kanopy" },
+          { "label": "Shudder", "value": "shudder" },
+          { "label": "Criterion Channel", "value": "criterion" }
+        ],
+        "defaultValue": ["netflix", "hulu", "max", "disney-plus", "amazon-prime-video", "apple-tv"]
+      },
+      "post_day": {
+        "type": "select",
+        "label": "Weekly post day",
+        "helpText": "Day of week the digest posts (UTC).",
+        "options": [
+          { "label": "Monday", "value": "1" },
+          { "label": "Tuesday", "value": "2" },
+          { "label": "Wednesday", "value": "3" },
+          { "label": "Thursday", "value": "4" },
+          { "label": "Friday", "value": "5" },
+          { "label": "Saturday", "value": "6" },
+          { "label": "Sunday", "value": "0" }
+        ],
+        "defaultValue": "1"
+      }
+    }
+  },
   "scheduler": {
     "tasks": {
       "weekly-broadcast": {
         "endpoint": "/internal/scheduler/weekly-broadcast",
-        "cron": "30 15 * * 1"
+        "cron": "30 15 * * *"
       }
     }
   },
@@ -33,7 +80,7 @@
     "items": [
       {
         "label": "Post this week's streaming update",
-        "description": "Manually run the weekly r/galaxymovies broadcast",
+        "description": "Manually run the weekly streaming digest for this community",
         "forUserType": "moderator",
         "location": "subreddit",
         "endpoint": "/internal/menu/post-now"

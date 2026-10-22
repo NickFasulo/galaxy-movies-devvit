@@ -1,8 +1,9 @@
 # Galaxy Movies Devvit app
 
-Posts a weekly streaming-availability digest to the subreddit it is installed on
-(r/galaxymovies). Content is fetched read-only from galaxymovies.app; the app
-posts once per week and collects no user data.
+Posts a weekly streaming-availability digest to whichever subreddit installs it.
+Moderators pick which streaming services to cover and the weekly post day via
+the app's subreddit settings. Content is fetched read-only from
+galaxymovies.app; the app posts once per week and collects no user data.
 
 ## Fetch Domains
 
