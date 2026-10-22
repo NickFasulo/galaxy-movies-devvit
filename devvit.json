@@ -73,6 +73,10 @@
       "weekly-broadcast": {
         "endpoint": "/internal/scheduler/weekly-broadcast",
         "cron": "30 15 * * *"
+      },
+      "monthly-departures": {
+        "endpoint": "/internal/scheduler/monthly-departures",
+        "cron": "0 17 25 * *"
       }
     }
   },
@@ -84,6 +88,13 @@
         "forUserType": "moderator",
         "location": "subreddit",
         "endpoint": "/internal/menu/post-now"
+      },
+      {
+        "label": "Post this month's departures",
+        "description": "Manually run the leaving-soon digest for this community",
+        "forUserType": "moderator",
+        "location": "subreddit",
+        "endpoint": "/internal/menu/post-departures"
       }
     ]
   },

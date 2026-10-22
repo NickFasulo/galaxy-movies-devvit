@@ -1,18 +1,19 @@
 # Galaxy Movies Devvit app
 
-Posts a weekly streaming-availability digest to whichever subreddit installs it.
-Moderators pick which streaming services to cover and the weekly post day via
-the app's subreddit settings. Content is fetched read-only from
-galaxymovies.app; the app posts once per week and collects no user data.
+Posts a weekly streaming-availability digest to whichever subreddit installs it,
+plus a leaving-soon digest on the 25th of each month. Moderators pick which
+streaming services to cover and the weekly post day via the app's subreddit
+settings. Content is fetched read-only from galaxymovies.app; the app collects
+no user data.
 
 ## Fetch Domains
 
 The following domains are requested for this app:
 
-- `www.galaxymovies.app` — fetches the weekly broadcast payload
+- `www.galaxymovies.app` — fetches the weekly and monthly broadcast payloads
   (`/api/reddit-payload`, a public read-only JSON endpoint returning the digest
-  title, body text, link, and a weekly dedupe key). The app performs no other
-  outbound requests.
+  title, body text, link, and a weekly or monthly dedupe key). The app performs
+  no other outbound requests.
 
 ## Commands
 

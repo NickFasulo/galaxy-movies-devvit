@@ -6,6 +6,9 @@ import type { MenuItemRequest, UiResponse } from '@devvit/web/shared'
 
 const PAYLOAD_URL = 'https://www.galaxymovies.app/api/reddit-payload'
 const LAST_POST_KEY = 'galaxymovies:last-broadcast-key'
+const LAST_DEPARTURES_KEY = 'galaxymovies:last-departures-key'
+
+type BroadcastKind = 'weekly' | 'leaving'
 
 interface BroadcastPayload {
   title: string
@@ -24,19 +27,20 @@ interface SubSettings {
   post_day?: string
 }
 
-async function runBroadcast(manual = false): Promise<BroadcastResult> {
+async function runBroadcast(manual = false, kind: BroadcastKind = 'weekly'): Promise<BroadcastResult> {
   const sub = await settings.getAll<SubSettings>().catch(() => ({}) as SubSettings)
   const postDay = String(sub.post_day ?? '1')
-  if (!manual && String(new Date().getUTCDay()) !== postDay) {
+  if (kind === 'weekly' && !manual && String(new Date().getUTCDay()) !== postDay) {
     return { status: 'skipped', detail: 'not the configured post day' }
   }
 
   const raw = sub.providers
   const providers = Array.isArray(raw) ? raw : typeof raw === 'string' && raw ? [raw] : []
-  const url = providers.length
-    ? `${PAYLOAD_URL}?providers=${encodeURIComponent(providers.join(','))}`
-    : PAYLOAD_URL
-  const resp = await fetch(url).catch(() => null)
+  const params = new URLSearchParams()
+  if (providers.length) params.set('providers', providers.join(','))
+  if (kind !== 'weekly') params.set('kind', kind)
+  const query = params.toString()
+  const resp = await fetch(query ? `${PAYLOAD_URL}?${query}` : PAYLOAD_URL).catch(() => null)
   if (!resp?.ok) return { status: 'failed', detail: `payload fetch ${resp?.status ?? 'network'}` }
 
   const payload = (await resp.json().catch(() => null)) as BroadcastPayload | null
@@ -44,8 +48,9 @@ async function runBroadcast(manual = false): Promise<BroadcastResult> {
     return { status: 'failed', detail: 'malformed payload' }
   }
 
-  if ((await redis.get(LAST_POST_KEY).catch(() => null)) === payload.key) {
-    return { status: 'skipped', detail: 'already posted this week' }
+  const dedupeKey = kind === 'leaving' ? LAST_DEPARTURES_KEY : LAST_POST_KEY
+  if ((await redis.get(dedupeKey).catch(() => null)) === payload.key) {
+    return { status: 'skipped', detail: `already posted this ${kind === 'leaving' ? 'month' : 'week'}` }
   }
 
   const subredditName = context.subredditName ?? 'galaxymovies'
@@ -55,7 +60,7 @@ async function runBroadcast(manual = false): Promise<BroadcastResult> {
     return { status: 'failed', detail: err instanceof Error ? err.message : 'submit failed' }
   }
 
-  await redis.set(LAST_POST_KEY, payload.key).catch(() => {})
+  await redis.set(dedupeKey, payload.key).catch(() => {})
   return { status: 'posted' }
 }
 
@@ -81,6 +86,22 @@ app.post('/internal/menu/post-now', async (c) => {
   const result = await runBroadcast(true)
   return c.json<UiResponse>(
     { showToast: `Broadcast ${result.status}${result.detail ? `: ${result.detail}` : ''}` },
+    200
+  )
+})
+
+app.post('/internal/scheduler/monthly-departures', async (c) => {
+  await c.req.json<TaskRequest>().catch(() => null)
+  const result = await runBroadcast(false, 'leaving')
+  console.log('monthly-departures:', JSON.stringify(result))
+  return c.json<TaskResponse>({ status: 'ok' }, 200)
+})
+
+app.post('/internal/menu/post-departures', async (c) => {
+  await c.req.json<MenuItemRequest>().catch(() => null)
+  const result = await runBroadcast(true, 'leaving')
+  return c.json<UiResponse>(
+    { showToast: `Departures ${result.status}${result.detail ? `: ${result.detail}` : ''}` },
     200
   )
 })
