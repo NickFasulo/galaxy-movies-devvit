@@ -1,0 +1,5 @@
+{
+  "json.schema.trustedDomains": {
+    "https://developers.reddit.com/": true
+  }
+}
